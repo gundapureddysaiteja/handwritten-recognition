@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Prediction</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e0f7e1; /* Light green background color */
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #1a57a5;
+            color: white;
+            margin: 0;
+        }
+
+        .main-content {
+            background-color: #fff; /* Choose a background color for the main content area */
+            margin: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        h2 {
+            margin-top: 40px;
+            text-align: center;
+            color: #333;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        .comparison {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .digit-image,
+        .character-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Prediction</h1>
+    
+    <div class="main-content">
+        <form action="/predict_char" method="post" enctype="multipart/form-data">
+            <label for="file_char">Upload Image for Character Prediction:</label>
+            <input type="file" name="file" id="file_char" accept=".jpg, .jpeg, .png" required>
+            <button type="submit">Predict Character</button>
+        </form>
+
+        <form action="/predict_digit" method="post" enctype="multipart/form-data">
+            <label for="file_digit">Upload Image for Digit Prediction:</label>
+            <input type="file" name="file" id="file_digit" accept=".jpg, .jpeg, .png" required>
+            <button type="submit">Predict Digit</button>
+        </form>
+
+        <form action="/predict_group" method="post" enctype="multipart/form-data">
+            <label for="file_group">Upload Image for Group Prediction:</label>
+            <input type="file" name="file" id="file_group" accept=".jpg, .jpeg, .png" required>
+            <button type="submit">Predict Group</button>
+        </form>
+
+        {% if char_prediction %}
+            <h2>Character Prediction: {{ char_prediction }}</h2>
+
+            <div class="comparison">
+                <p>Character Comparison:</p>
+                <img src="data:image/png;base64,{{ char_uploaded_image }}" alt="Character Image" class="character-image">
+            </div>
+        {% endif %}
+
+        {% if digit_prediction %}
+            <h2>Digit Prediction:</h2>
+
+            <div class="comparison">
+                {% for i in range(digit_count) %}
+                    <img src="data:image/png;base64,{{ uploaded_digits[i] }}" alt="Digit Image" class="digit-image">
+                    <p>Predicted Output: {{ digit_prediction[i] }}</p>
+                    <hr>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if group_predictions %}
+            <h2>Group Prediction:</h2>
+
+            <div class="comparison">
+                {% for i in range(group_count) %}
+                    <img src="data:image/png;base64,{{ group_uploaded_images[i] }}" alt="Character Image" class="character-image">
+                    <p>Predicted Output: {{ group_predictions[i] }}</p>
+                    <hr>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if error %}
+            <p class="error-message">Error: {{ error }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>
